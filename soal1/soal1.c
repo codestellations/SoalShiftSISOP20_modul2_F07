@@ -28,7 +28,7 @@ int checkNum(char arg[]);
 int checkAst(char arg[]);
 void checkVal(int sec, int min, int hr);
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
     if(argc != 5) /*karena argumen yg dibutuhkan 4*/
     {
@@ -39,9 +39,7 @@ int main(int argc, char **argv)
     int arguments[4];
     
     int hr = 0, min = 0, sec = 0;
-    char address[100];
     int curr_hr, curr_min, curr_sec, i;
-   
    
 //    struct tm *currTime;
     for(i = 1; i < 4; i++) /*cek input argument untuk cron*/
@@ -63,8 +61,7 @@ int main(int argc, char **argv)
        
     }
       checkVal(arguments[1], arguments[2], arguments[3]);
-    strcpy(address, argv[4]);
-
+    
     /*template Daemon*/
     pid_t pid, sid; //variabel untuk menyimpan PID
     pid = fork(); //menyimpan PID
@@ -102,7 +99,7 @@ int main(int argc, char **argv)
         curr_min = currTime->tm_min;
         curr_hr = currTime->tm_hour;
         
-        if((curr_sec == sec || sec == -1) && (curr_min == min || min == -1 ) && (curr_hr == hr || hr == -1))
+        if((curr_sec == arguments[1] || arguments[1] == -1) && (curr_min == arguments[2] || arguments[2] == -1 ) && (curr_hr == arguments[3] || arguments[3] == -1))
         {
             pid_t child_id;
             child_id = fork();
@@ -110,7 +107,7 @@ int main(int argc, char **argv)
             
             if(child_id == 0)
             {
-                char *arg_exec[] = {"bash", address, NULL};
+                char *arg_exec[] = {"bash", argv[4], NULL};
                 execv("/bin/bash", arg_exec);
             }
             else
@@ -118,7 +115,7 @@ int main(int argc, char **argv)
                 while((wait(&status)) > 0);
             }
         }
-        sleep(30);
+        sleep(1);
     }
 }
 
@@ -137,6 +134,7 @@ int checkNum(char arg[])
 
 int checkAst(char arg[])
 {
+    if(strlen(arg)==1)
     if(arg[0] == '*')
     {
         return 1;
