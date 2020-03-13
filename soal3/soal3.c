@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
 
   if (child_id_4 == 0){
     char *argv[13] = {"find", "/home/el/modul2/jpg/", "-not", "-type", "d",
-                     "-exec", "/bin/mv", "-t", "/home/el/modul2/indomie",
+                     "-exec", "/bin/mv", "-t", "/home/el/modul2/sedaap",
                      "--", "{}", "+", NULL};
     execv("/usr/bin/find", argv);
   }
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[]) {
   if (child_id_5 == 0){
     char *argv[16] = {"find", "/home/el/modul2/jpg/", "-maxdepth", "1",
                       "-mindepth", "1", "-type", "d", "-exec", "/bin/mv",
-                      "-t", "/home/el/modul2/sedaap", "--", "{}", "+", NULL};
+                      "-t", "/home/el/modul2/indomie", "--", "{}", "+", NULL};
     execv("/usr/bin/find", argv);
   }
 
@@ -73,7 +73,7 @@ int main(int argc, char const *argv[]) {
   else{
     while((wait(&status)) > 0);
 
-    DIR *dir = opendir("/home/el/modul2/sedaap");
+    DIR *dir = opendir("/home/el/modul2/indomie");
     struct dirent *entry, *subentry;
     int files = 0;
 
@@ -86,7 +86,7 @@ int main(int argc, char const *argv[]) {
 
     while((entry = readdir(dir))){
      if(entry->d_name[0]!='.'){
-        char dirname_1[100] = "/home/el/modul2/sedaap/";
+        char dirname_1[100] = "/home/el/modul2/indomie/";
 
         char txt_1[10] = "/coba1.txt";
         strncat(dirname_1, entry->d_name, strlen(entry->d_name));
@@ -99,7 +99,7 @@ int main(int argc, char const *argv[]) {
 
         sleep(3);
 
-        char dirname_2[100] = "/home/el/modul2/sedaap/";
+        char dirname_2[100] = "/home/el/modul2/indomie/";
         char txt_2[] = "/coba2.txt";
         strncat(dirname_2, entry->d_name, strlen(entry->d_name));
         strncat(dirname_2, txt_2, 10);
