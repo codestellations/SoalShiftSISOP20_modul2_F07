@@ -32,7 +32,7 @@ char* times(){
 }
 
 int main(int argc, char const *argv[]) {
-  pid_t sid, pid, child_id_1, child_id_2, child_id_3, child_id;
+  pid_t sid, pid, child_id_1, child_id_2, child_id_3, child_id_4, child_id;
 
   pid = fork();
 
@@ -59,82 +59,81 @@ int main(int argc, char const *argv[]) {
   close(STDOUT_FILENO);
   close(STDERR_FILENO);
 
+  //   fprintf(stdout, "while running %d\n", getpid());
   while(1){
     int hours, minutes, seconds, day, month, year;
     int files = 0;
     int status;
     char dirname[100] = "/home/el/khusus/", filesize[100],
-         fordir[100], zipname[100];
+         fordir[100], zipname[100], folder[50];
 
     // 2.a membuat folder khusus, di dalamnya membuat program c
     //     yang membuat folder bernama [timestamp] per 30 detik
-    strcat(dirname, times());
+    strcpy(folder, times());
+    strcat(dirname, folder);
 
     child_id_1 = fork();
-    if(child_id_1 == 0){
-      char *argv[4] = {"mkdir", "-p", dirname, NULL};
-      execv("/bin/mkdir", argv);
-    }
+    if (child_id_1 == 0) {
+      fprintf(stdout, "child 1 running %d\n", getpid());
 
-    // 2.b tiap folder diisi 20 gambar dari https://picsum.photos/
-    //     didownload tiap 5 detik dengan ukuran (t%1000)+100 dan
-    //     dinamakan [timestamp]
-    unsigned long epoch = time(NULL),
-                  size = (epoch%1000)+100;
-    sprintf(filesize, "%lu", (epoch%1000)+100);
+      while((waitpid(child_id_1, &status, 0)) > 0);
+      child_id_2 = fork();
 
-    while((waitpid(child_id_1, &status, 0)) > 0);
-
-    child_id_2 = fork();
-    if (child_id_2 == 0) {
-      int i;
-      for (i = 0; i < 20; i++) {
-        unsigned long epoch = time(NULL),
-                      size = (epoch%1000)+100;
-        sprintf(filesize, "%lu", (epoch%1000)+100);
-
-        char url[100] = "https://picsum.photos/";
-        strcat (url, filesize);
-
-        strcpy(fordir, dirname);
-        strcat(fordir, "/");
-        strcat(fordir, times());
-
-        child_id = fork();
-        if (child_id == 0) {
-          // char *argv[19] = {"wget", "-O", fordir, url, "2", ">", "&", "1",
-          //                   "|", "tee", "-a", "/home/el/khusus/wget.log", NULL};
-          // execv("/usr/bin/wget", argv);
-
-          char *argv[7] = {"wget", url, "-O", fordir, NULL};
-          execv("/usr/bin/wget", argv);
-
-          // FILENYA BUKAN FOTO ANJ
-          // char *argv[5] = {"curl", "-o", fordir, url, NULL};
-          // execv("/usr/bin/curl", argv);
-        }
-        sleep(5);
+      if(child_id_2 == 0){
+        fprintf(stdout, "child 2 running %d\n", getpid());
+        char *argv[4] = {"mkdir", "-p", dirname, NULL};
+        execv("/bin/mkdir", argv);
       }
 
-      // 2.c setelah terisi 20, folder dizip dan didelete
-      strcpy(zipname, dirname);
-      strcat(zipname, ".zip");
+      // 2.b tiap folder diisi 20 gambar dari https://picsum.photos/
+      //     didownload tiap 5 detik dengan ukuran (t%1000)+100 dan
+      //     dinamakan [timestamp]
+
+      while((waitpid(child_id_2, &status, 0)) > 0);
 
       child_id_3 = fork();
-
       if (child_id_3 == 0) {
-        char *argv[7] = {"zip", "-rm", zipname, dirname, NULL};
-        execv("/usr/bin/zip", argv);
+        int i;
+        for (i = 0; i < 20; i++) {
+          unsigned long epoch = time(NULL),
+                        size = (epoch%1000)+100;
+          sprintf(filesize, "%lu", (epoch%1000)+100);
+
+          char url[100] = "https://picsum.photos/";
+          strcat (url, filesize);
+
+          strcpy(fordir, dirname);
+          strcat(fordir, "/");
+          strcat(fordir, times());
+
+          child_id = fork();
+          if (child_id == 0) {
+            char *argv[7] = {"wget", url, "-O", fordir, NULL};
+            execv("/usr/bin/wget", argv);
+          }
+          sleep(5);
+        }
+
+        // 2.c setelah terisi 20, folder dizip dan didelete
+        strcpy(zipname, folder);
+        strcat(zipname, ".zip");
+
+        child_id_4 = fork();
+
+        if (child_id_4 == 0) {
+          char *argv[7] = {"zip", "-rm", zipname, folder, NULL};
+          execv("/usr/bin/zip", argv);
+        }
       }
     }
-
-    // 2.d generate program "killer" yang siap di run
-
-    // 2.e program utama punya mode -a untuk force stop kalau di kill
-    //     dan mode -b untuk berjalan sampai selesai kalau di kill
-
     sleep(30);
   }
+  // return 0;
 
-  return 0;
+  // 2.d generate program "killer" yang siap di run
+
+  // 2.e program utama punya mode -a untuk force stop kalau di kill
+  //     dan mode -b untuk berjalan sampai selesai kalau di kill
+
+  exit(EXIT_SUCCESS);
 }
