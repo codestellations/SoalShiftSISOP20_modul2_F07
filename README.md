@@ -241,11 +241,11 @@ strcat(zipname, ".zip");
 membuat string *zipname* yang berisi `/home/el/khusus/[timestamp]/[timestamp].zip`.
 
 ~~~
-child_id_4 = fork();
-
-if (child_id_4 == 0) {
-  char *argv[7] = {"zip", "-rm", zipname, folder, NULL};
-  execv("/usr/bin/zip", argv);
+child_id_3 = fork();
+      if (child_id_3 == 0) {
+        char *argv[7] = {"zip", "-rm", zipname, folder, NULL};
+        execv("/usr/bin/zip", argv);
+      }
 ~~~
 membuat child untuk menzip folder yang bersangkutan.
 - `-r` digunakan untuk menzip rekursif untuk semua file di dalam folder.
@@ -293,6 +293,22 @@ membuat file `killer.sh` dengan FILE.
 
 Kendala :
 pada poin ini, baru MODE_A saja yang dapat berjalan. untuk MODE_B, program belum bisa berhenti total, melainkan hanya proses paling awal yang sudah berjalan saja.
+
+---
+#### Input dengan MODE_A
+![Screenshot from 2020-03-18 23-54-55](https://user-images.githubusercontent.com/57877040/76985870-772fd380-6973-11ea-8d99-d190cfa5879e.png)
+
+#### Di dalam folder `khusus`
+![Screenshot from 2020-03-18 23-55-12](https://user-images.githubusercontent.com/57877040/76986028-b2320700-6973-11ea-9a61-230a2f25faf8.png)
+
+#### Hasil zip
+![Screenshot from 2020-03-18 23-56-52](https://user-images.githubusercontent.com/57877040/76986055-bcec9c00-6973-11ea-8952-32529a008d45.png)
+
+#### Execute `killer.sh`
+![Screenshot from 2020-03-18 23-56-09](https://user-images.githubusercontent.com/57877040/76986100-c83fc780-6973-11ea-8b8a-398a51854723.png)
+
+#### Hasil akhir folder `khusus`
+![Screenshot from 2020-03-18 23-57-22](https://user-images.githubusercontent.com/57877040/76986154-d988d400-6973-11ea-874a-bee98698feb6.png)
 
 ---
 
