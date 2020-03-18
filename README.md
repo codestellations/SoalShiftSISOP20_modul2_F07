@@ -1,5 +1,7 @@
 # SoalShiftSISOP20_modul2_F07
 Pengerjaan praktikum mata kuliah Sistem Operasi Informatika ITS 2020
+- Erlinda Argyanti Nugraha (05111840000017)
+- Lii'zza Aisyah Putri Sulistio (05111840000073)
 
 ## Soal 1
 Buatlah program C yang menyerupai crontab untuk menjalankan script bash dengan ketentuan sebagai berikut:
