@@ -33,7 +33,6 @@ char* times(){
 
 int main(int argc, char const *argv[]) {
   // 2.d generate program "killer" yang siap di run
-
   FILE * killer;
   killer = fopen("killer.sh", "w");
 
@@ -59,9 +58,7 @@ int main(int argc, char const *argv[]) {
     exit(0);
   }
 
-  fclose(killer);
-
-  pid_t sid, pid, child_id_1, child_id_2, child_id_3, child_id_4, child_id;
+  pid_t sid, pid, child_id_1, child_id_2, child_id_3, child_id;
 
   pid = fork();
 
@@ -80,7 +77,7 @@ int main(int argc, char const *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  if ((chdir("/")) < 0) {
+  if ((chdir("/home/el/khusus")) < 0) {
     exit(EXIT_FAILURE);
   }
 
@@ -90,6 +87,7 @@ int main(int argc, char const *argv[]) {
 
   while(1){
     int hours, minutes, seconds, day, month, year;
+    int files = 0;
     int status;
     char dirname[100] = "/home/el/khusus/", filesize[100],
          fordir[100], zipname[100], folder[50];
@@ -100,21 +98,22 @@ int main(int argc, char const *argv[]) {
     strcat(dirname, folder);
 
     child_id_1 = fork();
-    if (child_id_1 == 0) {
-      while((waitpid(child_id_1, &status, 0)) > 0);
-      child_id_2 = fork();
+    if(child_id_1 == 0){
+      char *argv[4] = {"mkdir", "-p", dirname, NULL};
+      execv("/bin/mkdir", argv);
+    }
 
-      if(child_id_2 == 0){
-        char *argv[4] = {"mkdir", "-p", dirname, NULL};
-        execv("/bin/mkdir", argv);
-      }
+    // 2.b tiap folder diisi 20 gambar dari https://picsum.photos/
+    //     didownload tiap 5 detik dengan ukuran (t%1000)+100 dan
+    //     dinamakan [timestamp]
+    unsigned long epoch = time(NULL),
+                  size = (epoch%1000)+100;
+    sprintf(filesize, "%lu", (epoch%1000)+100);
 
-      // 2.b tiap folder diisi 20 gambar dari https://picsum.photos/
-      //     didownload tiap 5 detik dengan ukuran (t%1000)+100 dan
-      //     dinamakan [timestamp]
+    while((waitpid(child_id_1, &status, 0)) > 0);
 
-      while((waitpid(child_id_2, &status, 0)) > 0);
-
+    child_id_2 = fork();
+    if (child_id_2 == 0) {
       int i;
       for (i = 0; i < 20; i++) {
         unsigned long epoch = time(NULL),
@@ -140,13 +139,16 @@ int main(int argc, char const *argv[]) {
       strcpy(zipname, folder);
       strcat(zipname, ".zip");
 
-      child_id_4 = fork();
+      while((waitpid(child_id_1, &status, 0)) > 0);
 
-      if (child_id_4 == 0) {
+      child_id_3 = fork();
+      if (child_id_3 == 0) {
         char *argv[7] = {"zip", "-rm", zipname, folder, NULL};
         execv("/usr/bin/zip", argv);
       }
     }
     sleep(30);
   }
+
+  return 0;
 }
