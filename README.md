@@ -3,20 +3,20 @@ Pengerjaan praktikum mata kuliah Sistem Operasi Informatika ITS 2020
 
 ## Soal 1
 Buatlah program C yang menyerupai crontab untuk menjalankan script bash dengan ketentuan sebagai berikut:
-a. Program menerima 4 argumen berupa:
-i. Detik: 0-59 atau * (any value)
-ii. Menit: 0-59 atau * (any value)
-iii. Jam: 0-23 atau * (any value)
-iv. Path file .sh
-b. Program akan mengeluarkan pesan error jika argumen yang diberikan tidak
-sesuai
-c. Program hanya menerima 1 config cron
-d. Program berjalan di background (daemon)
-e. Tidak boleh menggunakan fungsi system()
+ a. Program menerima 4 argumen berupa:
+   i. Detik: 0-59 atau * (any value)
+   ii. Menit: 0-59 atau * (any value)
+   iii. Jam: 0-23 atau * (any value)
+   iv. Path file .sh
+  b. Program akan mengeluarkan pesan error jika argumen yang diberikan tidak sesuai
+  c. Program hanya menerima 1 config cron
+  d. Program berjalan di background (daemon)
+  e. Tidak boleh menggunakan fungsi system()
 Contoh: ./program \* 34 7 /home/somi/test.sh
 Program dengan argumen seperti contoh di atas akan menjalankan script test.sh setiap detik pada jam 07:34.
 
 Kendala: kesulitan mengecek apakah bash sudah dijalankan dengan benar oleh program.
+> [source code program](https://github.com/codestellations/SoalShiftSISOP20_modul2_F07/blob/master/soal1/soal1.c)
 
 ### Mengecek banyaknya argumen yang dimasukkan dan progam hanya menerima 1 config cron
 Berikut merupakan code untuk mengecek apakah banyaknya argumen yang dimasukkan sudah sesuai atau tidak. Jika argumen yang dimasukkan tidak samadengan 5 maka program akan ke luar dan mengeluarkan pesan mengapa jumlah argumen yang dimasukkan tidak sesuai. Pada main program, argc digunakan untuk menyimpan banyaknya argument yang dimasukkan oleh user.
@@ -152,7 +152,15 @@ Code untuk daemon diambil dari template daemon pada modul 2 yang diubah agar ses
         sleep(1);
     }
 ~~~
+
+Input
 <img width="836" alt="Screen Shot 2020-03-18 at 20 40 37" src="https://user-images.githubusercontent.com/58472359/76967088-7c802480-6959-11ea-9cb2-623ae8d71c00.png">
+Bash akan dijalankan setiap 15 menit sekali.
+> [bash yang digunakan](https://github.com/codestellations/SoalShiftSISOP20_modul2_F07/blob/master/soal1/password.sh)
+
+Output
+<img width="915" alt="Screen Shot 2020-03-18 at 20 55 42" src="https://user-images.githubusercontent.com/58472359/76968147-fbc22800-695a-11ea-8e33-940f1b8646a2.png">
+> hasil dari dijalankannya bash tersebut disimpan dalam file [straykids.txt](https://github.com/codestellations/SoalShiftSISOP20_modul2_F07/blob/master/soal1/straykids.txt)
 
 
 ---
