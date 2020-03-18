@@ -257,26 +257,42 @@ membuat child untuk menzip folder yang bersangkutan.
 sleep untuk jeda 30 detik dalam membuat folder baru di dalam while.
 
 ### 2.d Generate program killer yang siap di run
-poin ini belum terselesaikan karena kami belum mendapatkan cara untuk membuat program c di dalam program c, yang kemudian bisa diexecute untuk membunuh program utama.
+~~~
+  FILE * killer;
+  killer = fopen("killer.sh", "w");
+~~~
+membuat file `killer.sh` dengan FILE.
 
 ### 2.e Program utama mempunyai MODE_A dan MODE_B yang berguna dalam meng-kill program tersebut
-- *MODE_A* akan membunuh program utama secara paksa, di mana semua pekerjaan yang sedang dilakukan akan diberhentikan pula.
-- *MODE_B* akan membunuh program utama secara lebih halus, di mana pekerjaan mendownload dan menzip folder yang sudah (dan belum) berjalan akan tetap berjalan sampai folder dizip dan dihapus, namun tidak ada lagi folder yang akan terbuat.
-
-poin ini belum terselesaikan karena kami belum mendapatkan cara membunuh dalam *MODE_B*, di mana seharusnya parent yang dibunuh dan loop while dalam daemon process akan berhenti. Yang masih terjadi adalah hanya pembuatan folder dan download di dalamnya yang berhenti, namun folder lain tetap dibuat.
-
-sedangkan untuk *MODE_A*, yang kami dapatkan barulah code untuk menjalankan perintah `killall` terhadap program utama yang sudah di run. Namun, saat program ini dijalankan beserta dengan argumennya, perintah `killall` belum terlaksana.
 ~~~
-int main(int argc, char const *argv[]) {
   if(argc == 2){
     if(strcmp(argv[1], "-a") == 0){
-      char *argv[3] = {"killall", "soal2", NULL};
-      execv("usr/bin/killall", argv);
+      fprintf(killer, "#!/bin/bash\nkillall soal2\n");
+      fprintf(killer, "rm $0");
+    }
+    else if(strcmp(argv[1], "-b") == 0){
+      fprintf(killer, "#!/bin/bash\nkill %d\n", getpid() + 1);
+      fprintf(killer, "rm $0");
+    }
+    else{
+      printf("Invalid command. Use -a or -b.\n");
+      exit(0);
     }
   }
-  return 0;
-}
+
+  else{
+    printf("Invalid command. Insert only 2 arguments.\n");
+    exit(0);
+  }
+
+  fclose(killer);
 ~~~
+- *MODE_A* akan membunuh program utama secara paksa, di mana semua pekerjaan yang sedang dilakukan akan diberhentikan pula.
+- *MODE_B* akan membunuh program utama secara lebih halus, di mana pekerjaan mendownload dan menzip folder yang sudah (dan belum) berjalan akan tetap berjalan sampai folder dizip dan dihapus, namun tidak ada lagi folder yang akan terbuat.
+- `rm $0` berfungsi untuk menghapus file `killer.sh` tersebut setelah menjalankan tugasnya.
+
+Kendala :
+pada poin ini, baru MODE_A saja yang dapat berjalan. untuk MODE_B, program belum bisa berhenti total, melainkan hanya proses paling awal yang sudah berjalan saja.
 
 ---
 
@@ -405,3 +421,20 @@ untuk membuat file `coba1.txt`, dan memberi jeda 3 detik sebelum menjalankan sel
 untuk membuat file `coba2.txt`.
 
 ---
+
+#### Input soal 3
+![Screenshot from 2020-03-18 22-09-13](https://user-images.githubusercontent.com/57877040/76979073-118b1980-696a-11ea-896f-b09be30e38e9.png)
+
+#### Output folder `modul2`
+![Screenshot from 2020-03-18 22-09-29](https://user-images.githubusercontent.com/57877040/76979760-fcfb5100-696a-11ea-8da8-fc54711697e4.png)
+
+#### Output folder `sedaap`
+![Screenshot from 2020-03-18 22-10-30](https://user-images.githubusercontent.com/57877040/76979807-0be20380-696b-11ea-823e-e51b3d1e10e6.png)
+
+#### Output folder `indomie`
+![Screenshot from 2020-03-18 22-10-43](https://user-images.githubusercontent.com/57877040/76979833-14d2d500-696b-11ea-9220-7e9d2fb5c904.png)
+
+![Screenshot from 2020-03-18 22-10-59](https://user-images.githubusercontent.com/57877040/76979851-19978900-696b-11ea-8b94-e53d0dbb8fbc.png)
+
+![Screenshot from 2020-03-18 22-15-34](https://user-images.githubusercontent.com/57877040/76979881-24521e00-696b-11ea-8aa7-92e5abf14ba4.png)
+
