@@ -26,9 +26,8 @@ void invalidArg() /*digunakan untuk memberi tahu user jika input yang dimasukkan
 /*prototype function*/
 int checkNum(char arg[]);
 int checkAst(char arg[]);
-void checkVal(int sec, int min, int hr);
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     if(argc != 5) /*karena argumen yg dibutuhkan 4*/
     {
@@ -38,10 +37,9 @@ int main(int argc, char *argv[])
     }
     int arguments[4];
     
-    int hr = 0, min = 0, sec = 0;
+   int hr = 0, min = 0, sec = 0;
     int curr_hr, curr_min, curr_sec, i;
    
-//    struct tm *currTime;
     for(i = 1; i < 4; i++) /*cek input argument untuk cron*/
     {
         if(checkNum(argv[i]))
@@ -57,10 +55,15 @@ int main(int argc, char *argv[])
         {
             invalidArg();
             exit(EXIT_FAILURE);
-        }
-       
+        }   
     }
-      checkVal(arguments[1], arguments[2], arguments[3]);
+    /*mengecek ketentuan input apakah sudah sesuai atau belum*/
+    if(sec < -1 || sec > 59 || min < -1 || min > 59 || hr < -1 || hr > 23)
+       {
+           invalidArg();
+           printf("Input format: seconds (0 - 59) | minutes (0 - 59) | hour (0 - 23)\n");
+           exit(EXIT_FAILURE);
+       }
     
     /*template Daemon*/
     pid_t pid, sid; //variabel untuk menyimpan PID
@@ -80,10 +83,7 @@ int main(int argc, char *argv[])
     {
         exit(EXIT_FAILURE);
     }
-//    if((chdir("/")) < 0)
-//    {
-//        exit(EXIT_FAILURE);
-//    }
+    
     /*menutup file descriptor standar*/
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
@@ -134,20 +134,12 @@ int checkNum(char arg[])
 
 int checkAst(char arg[])
 {
-    if(strlen(arg)==1)
-    if(arg[0] == '*')
+    if(strlen(arg) == 1)
     {
-        return 1;
+        if(arg[0] == '*')
+        {
+            return 1;
+        }
     }
-    return 0; /*jika input yg dimasukkan bukan angka (atau asterisk)*/
-}
-
-void checkVal(int sec, int min, int hr) /*mengecek input detik, menit, dan jam berdasarkan range yg sudah ditentukan*/
-{
-    if(sec < -1 || sec > 59 || min < -1 || min > 59 || hr < -1 || hr > 23)
-    {
-        invalidArg();
-        printf("Input format: seconds (0 - 59) | minutes (0 - 59) | hour (0 - 23)\n");
-        exit(EXIT_FAILURE);
-    }
+    return 0; /*jika input yg dimasukkan bukan asterisk (atau angka)*/
 }
