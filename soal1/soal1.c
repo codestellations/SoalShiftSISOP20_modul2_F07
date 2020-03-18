@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     int arguments[4];
     
    int hr = 0, min = 0, sec = 0;
-    int curr_hr, curr_min, curr_sec, i;
+   int curr_hr, curr_min, curr_sec, i;
    
     for(i = 1; i < 4; i++) /*cek input argument untuk cron*/
     {
