@@ -152,6 +152,7 @@ Code untuk daemon diambil dari template daemon pada modul 2 yang diubah agar ses
         sleep(1);
     }
 ~~~
+<img width="836" alt="Screen Shot 2020-03-18 at 20 40 37" src="https://user-images.githubusercontent.com/58472359/76967088-7c802480-6959-11ea-9cb2-623ae8d71c00.png">
 
 
 ---
