@@ -139,7 +139,7 @@ int main(int argc, char const *argv[]) {
       strcpy(zipname, folder);
       strcat(zipname, ".zip");
 
-      while((waitpid(child_id_1, &status, 0)) > 0);
+      while((waitpid(child_id_2, &status, 0)) > 0);
 
       child_id_3 = fork();
       if (child_id_3 == 0) {
