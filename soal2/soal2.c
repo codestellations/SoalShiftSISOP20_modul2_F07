@@ -32,6 +32,35 @@ char* times(){
 }
 
 int main(int argc, char const *argv[]) {
+  // 2.d generate program "killer" yang siap di run
+
+  FILE * killer;
+  killer = fopen("killer.sh", "w");
+
+  // 2.e program utama punya mode -a untuk force stop kalau di kill
+  //     dan mode -b untuk berjalan sampai selesai kalau di kill
+  if(argc == 2){
+    if(strcmp(argv[1], "-a") == 0){
+      fprintf(killer, "#!/bin/bash\nkillall soal2\n");
+      fprintf(killer, "rm $0");
+    }
+    else if(strcmp(argv[1], "-b") == 0){
+      fprintf(killer, "#!/bin/bash\nkill %d\n", getpid() + 1);
+      fprintf(killer, "rm $0");
+    }
+    else{
+      printf("Invalid command. Use -a or -b.\n");
+      exit(0);
+    }
+  }
+
+  else{
+    printf("Invalid command. Insert only 2 arguments.\n");
+    exit(0);
+  }
+
+  fclose(killer);
+
   pid_t sid, pid, child_id_1, child_id_2, child_id_3, child_id_4, child_id;
 
   pid = fork();
@@ -51,7 +80,7 @@ int main(int argc, char const *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  if ((chdir("/home/el/khusus")) < 0) {
+  if ((chdir("/")) < 0) {
     exit(EXIT_FAILURE);
   }
 
@@ -59,10 +88,8 @@ int main(int argc, char const *argv[]) {
   close(STDOUT_FILENO);
   close(STDERR_FILENO);
 
-  //   fprintf(stdout, "while running %d\n", getpid());
   while(1){
     int hours, minutes, seconds, day, month, year;
-    int files = 0;
     int status;
     char dirname[100] = "/home/el/khusus/", filesize[100],
          fordir[100], zipname[100], folder[50];
@@ -74,13 +101,10 @@ int main(int argc, char const *argv[]) {
 
     child_id_1 = fork();
     if (child_id_1 == 0) {
-      fprintf(stdout, "child 1 running %d\n", getpid());
-
       while((waitpid(child_id_1, &status, 0)) > 0);
       child_id_2 = fork();
 
       if(child_id_2 == 0){
-        fprintf(stdout, "child 2 running %d\n", getpid());
         char *argv[4] = {"mkdir", "-p", dirname, NULL};
         execv("/bin/mkdir", argv);
       }
@@ -91,49 +115,38 @@ int main(int argc, char const *argv[]) {
 
       while((waitpid(child_id_2, &status, 0)) > 0);
 
-      child_id_3 = fork();
-      if (child_id_3 == 0) {
-        int i;
-        for (i = 0; i < 20; i++) {
-          unsigned long epoch = time(NULL),
-                        size = (epoch%1000)+100;
-          sprintf(filesize, "%lu", (epoch%1000)+100);
+      int i;
+      for (i = 0; i < 20; i++) {
+        unsigned long epoch = time(NULL),
+                      size = (epoch%1000)+100;
+        sprintf(filesize, "%lu", (epoch%1000)+100);
 
-          char url[100] = "https://picsum.photos/";
-          strcat (url, filesize);
+        char url[100] = "https://picsum.photos/";
+        strcat (url, filesize);
 
-          strcpy(fordir, dirname);
-          strcat(fordir, "/");
-          strcat(fordir, times());
+        strcpy(fordir, dirname);
+        strcat(fordir, "/");
+        strcat(fordir, times());
 
-          child_id = fork();
-          if (child_id == 0) {
-            char *argv[7] = {"wget", url, "-O", fordir, NULL};
-            execv("/usr/bin/wget", argv);
-          }
-          sleep(5);
+        child_id = fork();
+        if (child_id == 0) {
+          char *argv[7] = {"wget", url, "-O", fordir, NULL};
+          execv("/usr/bin/wget", argv);
         }
+        sleep(5);
+      }
 
-        // 2.c setelah terisi 20, folder dizip dan didelete
-        strcpy(zipname, folder);
-        strcat(zipname, ".zip");
+      // 2.c setelah terisi 20, folder dizip dan didelete
+      strcpy(zipname, folder);
+      strcat(zipname, ".zip");
 
-        child_id_4 = fork();
+      child_id_4 = fork();
 
-        if (child_id_4 == 0) {
-          char *argv[7] = {"zip", "-rm", zipname, folder, NULL};
-          execv("/usr/bin/zip", argv);
-        }
+      if (child_id_4 == 0) {
+        char *argv[7] = {"zip", "-rm", zipname, folder, NULL};
+        execv("/usr/bin/zip", argv);
       }
     }
     sleep(30);
   }
-  // return 0;
-
-  // 2.d generate program "killer" yang siap di run
-
-  // 2.e program utama punya mode -a untuk force stop kalau di kill
-  //     dan mode -b untuk berjalan sampai selesai kalau di kill
-
-  exit(EXIT_SUCCESS);
 }
